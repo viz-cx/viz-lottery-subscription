@@ -51,4 +51,4 @@ function hashSum(s: string): number {
     }, 0)
 }
 
-setInterval(runApp, 1000 * 10)
+setInterval(runApp, 1000 * 60 * 3)
