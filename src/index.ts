@@ -9,25 +9,32 @@ async function runApp() {
         let currentBlock = new CurrentBlock()
         let blocksPerDay = 60 * 60 * 24 / 3
         let nextBlock = currentBlock.load() + blocksPerDay
-        console.log('Checking next block', nextBlock)
+        let latestBlock = (await viz.getDynamicGlobalProperties())['last_irreversible_block_num']
+        console.log(`Latest block ${latestBlock}. Checking next block ${nextBlock}`)
+        if (latestBlock > nextBlock + blocksPerDay) {
+            console.log('Too much offline, moving to the future')
+            currentBlock.save(nextBlock)
+            return
+        }
         let block = await viz.getBlockHeader(nextBlock)
         if (block) {
             let accountName = process.env.ACCOUNT
             let account = await viz.getAccount(accountName)
-            let balance = parseFloat(account['balance'])
+            let balance = 0.01 //parseFloat(account['balance'])
             let activeSubscribers = (await viz.getPaidSubscriptionOptions(accountName))['active_subscribers']
             let statuses = await Promise.all(activeSubscribers.map(subscriber => viz.getPaidSubscriptionStatus(subscriber, accountName)))
-            var participants: Object[] = []
+            var participants: string[] = []
             for (let status of statuses) {
                 let subscriber = status['subscriber']
                 let level = status['level']
                 participants = participants.concat(Array(level).fill(subscriber))
             }
-            const hashSumResult = hashSum(block['previous'] + block['witness'])
-            const winnerCode = hashSumResult % participants.length
-            const winner = participants[winnerCode]
-            console.log(winner)
-            // TODO: pay to winner
+            let hashSumResult = hashSum(block['previous'] + block['witness'])
+            let winnerCode = hashSumResult % participants.length
+            let winner = participants[winnerCode]
+            console.log('Winner:', winner)
+            let result = await viz.pay(winner, balance)
+            console.log(result)
             currentBlock.save(nextBlock)
             // TODO: send post to FSP
         }
