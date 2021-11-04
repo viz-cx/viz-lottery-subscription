@@ -20,7 +20,7 @@ async function runApp() {
         if (block) {
             let accountName = process.env.ACCOUNT
             let account = await viz.getAccount(accountName)
-            let balance = 0.01 //parseFloat(account['balance'])
+            let balance = parseFloat(account['balance'])
             let activeSubscribers = (await viz.getPaidSubscriptionOptions(accountName))['active_subscribers']
             let statuses = await Promise.all(activeSubscribers.map(subscriber => viz.getPaidSubscriptionStatus(subscriber, accountName)))
             var participants: string[] = []

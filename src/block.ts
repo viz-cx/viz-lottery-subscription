@@ -1,7 +1,7 @@
 import { readFileSync, WriteFileOptions, writeFileSync } from 'fs'
 
 export class CurrentBlock {
-    private fileName = `${__dirname}/../.block`
+    private fileName = `${__dirname}/../data/.block`
     private options: WriteFileOptions = { encoding: 'utf-8' }
 
     public save(block: number) {
