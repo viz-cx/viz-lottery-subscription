@@ -21,7 +21,9 @@ async function runApp() {
             let accountName = process.env.ACCOUNT
             let account = await viz.getAccount(accountName)
             let balance = parseFloat(account['balance'])
-            let activeSubscribers = (await viz.getPaidSubscriptionOptions(accountName))['active_subscribers']
+            let subscriptionOptions = await viz.getPaidSubscriptionOptions(accountName)
+            let activeSubscribers = subscriptionOptions['active_subscribers']
+            let subscriptionAmount = parseFloat(subscriptionOptions['amount']) / 1000
             let statuses = await Promise.all(activeSubscribers.map(subscriber => viz.getPaidSubscriptionStatus(subscriber, accountName)))
             var participants: string[] = []
             for (let status of statuses) {
@@ -33,7 +35,14 @@ async function runApp() {
             let winnerCode = hashSumResult % participants.length
             let winner = participants[winnerCode]
             console.log('Winner:', winner)
-            let result = await viz.pay(winner, balance)
+            let doubleSubscriptionSum = participants.length * subscriptionAmount * 2
+            let payAmount: number
+            if (balance > doubleSubscriptionSum) {
+                payAmount = doubleSubscriptionSum
+            } else {
+                payAmount = balance
+            }
+            let result = await viz.pay(winner, payAmount)
             console.log(result)
             currentBlock.save(nextBlock)
             // TODO: send post to FSP
