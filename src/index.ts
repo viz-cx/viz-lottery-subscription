@@ -56,6 +56,7 @@ async function runApp() {
 🤹 Розыгрыш завершился на блоке ${nextBlock}
 🤖 Хеш-сумма ${hashSumResult}
 🚴 Участники: ${users}`
+            console.log(text)
             object['d'] = { 't': text }
             let json = JSON.stringify(object)
             let customResult = await viz.broadcastCustom(json)
