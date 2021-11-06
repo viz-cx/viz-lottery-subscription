@@ -10,7 +10,7 @@ async function runApp() {
         let blocksPerDay = 60 * 60 * 24 / 3
         let nextBlock = currentBlock.load() + blocksPerDay
         let latestBlock = (await viz.getDynamicGlobalProperties())['last_irreversible_block_num']
-        console.log(`Latest block ${latestBlock}. Checking next block ${nextBlock}`)
+        console.log(`Checking next block ${nextBlock}. ${nextBlock-latestBlock} blocks left`)
         if (latestBlock > nextBlock + blocksPerDay) {
             console.log('Too much offline, moving to the future')
             currentBlock.save(nextBlock)
@@ -45,9 +45,26 @@ async function runApp() {
             let result = await viz.pay(winner, payAmount)
             console.log(result)
             currentBlock.save(nextBlock)
-            // TODO: send post to FSP
+            // send post to FSP
+            let previous = account['custom_sequence_block_num']
+            let object = {}
+            if (previous > 0) {
+                object['p'] = previous
+            }
+            object['t'] = 'text'
+            let users = statuses.map(status => status['subscriber'] + ' (' + status['level'] + ')' ).join(', ')
+            let text = `
+            🏆 Победитель @${winner} получает ${payAmount.toFixed(3)} VIZ
+
+            🤹 Розыгрыш завершился на блоке ${nextBlock}, хеш-сумма ${hashSumResult}
+            🧗 Участники: ${users}
+            `
+            object['d'] = { 't': text }
+            let json = JSON.stringify(object)
+            let customResult = await viz.broadcastCustom(json)
+            console.log(customResult)
         }
-    } catch(err) {
+    } catch (err) {
         console.log('Error:', err)
         viz.changeNode()
     }

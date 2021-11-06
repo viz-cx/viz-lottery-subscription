@@ -21,6 +21,20 @@ export class VIZ {
         VIZ.vizJS.config.set('websocket', node)
     }
 
+    public broadcastCustom(json: string, protocol = 'V') {
+        const from = process.env.ACCOUNT
+        const wif = process.env.WIF
+        return new Promise((resolve, reject) => {
+            VIZ.vizJS.broadcast.custom(wif, [], [from], protocol, json, function (err, result) {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(result)
+                }
+            })
+        })
+    }
+
     public pay(to: string, amount: number) {
         const from = process.env.ACCOUNT
         const wif = process.env.WIF
