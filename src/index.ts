@@ -52,7 +52,7 @@ async function runApp() {
                 object['p'] = previous
             }
             object['t'] = 'text'
-            let users = statuses.map(status => status['subscriber'] + ' (' + status['level'] + ')' ).join(', ')
+            let users = statuses.map(status => status['subscriber'] + '(' + status['level'] + ')' ).join(', ')
             let text = `
             🏆 Победитель @${winner} получает ${payAmount.toFixed(2)} VIZ
             🤹 Розыгрыш завершился на блоке ${nextBlock}
