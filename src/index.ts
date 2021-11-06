@@ -51,13 +51,11 @@ async function runApp() {
             if (previous > 0) {
                 object['p'] = previous
             }
-            object['t'] = 'text'
             let users = statuses.map(status => status['subscriber'] + '(' + status['level'] + ')' ).join(', ')
-            let text = `
-            🏆 Победитель @${winner} получает ${payAmount.toFixed(2)} VIZ
-            🤹 Розыгрыш завершился на блоке ${nextBlock}
-            🤖 Хеш-сумма ${hashSumResult}
-            🚴 Участники: ${users}`
+            let text = `🏆 Победитель @${winner} получает ${payAmount.toFixed(2)} VIZ
+🤹 Розыгрыш завершился на блоке ${nextBlock}
+🤖 Хеш-сумма ${hashSumResult}
+🚴 Участники: ${users}`
             object['d'] = { 't': text }
             let json = JSON.stringify(object)
             let customResult = await viz.broadcastCustom(json)
