@@ -55,10 +55,9 @@ async function runApp() {
             let users = statuses.map(status => status['subscriber'] + ' (' + status['level'] + ')' ).join(', ')
             let text = `
             🏆 Победитель @${winner} получает ${payAmount.toFixed(3)} VIZ
-
-            🤹 Розыгрыш завершился на блоке ${nextBlock}, хеш-сумма ${hashSumResult}
-            🧗 Участники: ${users}
-            `
+            🤹 Розыгрыш завершился на блоке ${nextBlock}
+            🤖 Хеш-сумма ${hashSumResult}
+            🚴 Участники: ${users}`
             object['d'] = { 't': text }
             let json = JSON.stringify(object)
             let customResult = await viz.broadcastCustom(json)
